@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BookIcon, SwordsIcon } from './icons';
 
@@ -7,7 +6,7 @@ interface StartScreenProps {
   onLoadGame: () => void;
 }
 
-const MainButton = ({ onClick, disabled, children, icon: Icon }: { onClick: () => void, disabled?: boolean, children: React.ReactNode, icon: React.ElementType }) => (
+const MainButton = ({ onClick, disabled, children, icon: React.ElementType }) => (
     <button
         onClick={onClick}
         disabled={disabled}
@@ -49,14 +48,14 @@ export const StartScreen = ({ onNewGame, onLoadGame }: StartScreenProps) => {
         <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#4d3d2e] p-4 text-[#f3e9d3]">
             <div className="w-full max-w-md bg-[#f3e9d3] text-[#422b15] p-8 rounded-xl border-4 border-[#a58d6e] shadow-2xl text-center">
                  <div className="flex items-center justify-center gap-4 mb-2">
-                    <img src="https://ai-rpg.quest/assets/pedena-logo.png" alt="Shield Logo" className="w-16 h-16" />
+                    <img src="/pedena-logo.png" alt="Shield Logo" className="w-16 h-16" />
                     <div>
                         <h1 className="text-4xl font-title">The Chronicles</h1>
                         <h1 className="text-4xl font-title -mt-1">of Pedena</h1>
                     </div>
                  </div>
                 <p className="text-lg mb-8 italic">A Text-Based RPG Adventure</p>
-                
+
                 {!apiKeyExists && (
                     <div className="mb-6 p-4 bg-red-100 border border-red-300 rounded-lg">
                         <p className="text-red-700 font-semibold mb-2">API Key Required!</p>
@@ -86,13 +85,13 @@ export const StartScreen = ({ onNewGame, onLoadGame }: StartScreenProps) => {
                         </button>
                     </div>
                 )}
-                
+
                 {showApiKeyWarning && (
                     <div className="mb-4 p-3 bg-yellow-100 border border-yellow-300 rounded">
                         <p className="text-yellow-700 text-sm">Please set up your API key first!</p>
                     </div>
                 )}
-                
+
                 <div className="space-y-6">
                     <MainButton onClick={handleNewGame} disabled={!apiKeyExists} icon={SwordsIcon}>New Game</MainButton>
                     <MainButton onClick={handleLoadGame} disabled={!saveExists || !apiKeyExists} icon={BookIcon}>Load Game</MainButton>
