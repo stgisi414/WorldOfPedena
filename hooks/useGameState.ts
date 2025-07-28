@@ -69,7 +69,7 @@ export const useGameState = () => {
       displayMessage('Game Saved!', 'success');
     }
   }, [gameState.player, gameState.gameWorld, gameState.messages, displayMessage]);
-  
+
   const loadGame = useCallback(() => {
     const savedData = localStorage.getItem(SAVE_GAME_KEY);
     if (savedData) {
@@ -104,7 +104,7 @@ export const useGameState = () => {
         player.spells.push(...(level1Data.spells || []));
         player.cantrips.push(...(level1Data.cantrips || []));
     }
-    
+
     setGameState(prev => ({
       ...prev,
       player: player,
@@ -125,7 +125,7 @@ export const useGameState = () => {
 
       setGameState(prev => {
         if (!prev.player || !prev.gameWorld) return prev;
-        
+
         let newPlayer = { ...prev.player, party: [...prev.player.party] };
         const newWorld = { ...prev.gameWorld, nearbyNPCs: [...prev.gameWorld.nearbyNPCs] };
 
@@ -135,7 +135,7 @@ export const useGameState = () => {
           if (hp) newPlayer.hp = Math.min(newPlayer.maxHp, newPlayer.hp + hp);
           if (gold) newPlayer.gold += gold;
           if (xp) newPlayer.xp += xp;
-          
+
           if (levelUp) {
               const currentLevel = newPlayer.level;
               const newLevel = currentLevel + 1;
@@ -153,7 +153,7 @@ export const useGameState = () => {
                   const xpOver = newPlayer.xp - newPlayer.nextLevelXp;
                   newPlayer.nextLevelXp = Math.floor(newPlayer.nextLevelXp * 1.75);
                   newPlayer.xp = Math.max(0, xpOver);
-                  
+
                   // Add new features, abilities, etc.
                   if (progressionData.features) newPlayer.features.push(...progressionData.features);
                   if (progressionData.abilities) newPlayer.abilities.push(...progressionData.abilities);
@@ -199,9 +199,9 @@ export const useGameState = () => {
             if (changes.worldUpdate.location && newWorld.location.toLowerCase() !== changes.worldUpdate.location.toLowerCase()) {
                 const newLocationName = changes.worldUpdate.location;
                 const locationData = worldData.locations.find(l => l.name.toLowerCase() === newLocationName.toLowerCase());
-                
+
                 newWorld.location = newLocationName;
-                
+
                 if (locationData) {
                     const npcs = locationData.npcs.map(npcId => {
                         const npcData = worldData.npcs.find(n => n.id === npcId);
@@ -241,7 +241,7 @@ export const useGameState = () => {
             displayMessage(`You obtained: ${newItem.name}`, 'success');
           });
         }
-        
+
         // Inventory Remove
         if (changes.inventoryRemove) {
            changes.inventoryRemove.forEach((itemName: string) => {
@@ -280,7 +280,7 @@ export const useGameState = () => {
                 }
             });
         }
-        
+
         // Quest updates
         if (changes.questUpdate) {
             const { id, title, description, isCompleted } = changes.questUpdate;
@@ -297,7 +297,7 @@ export const useGameState = () => {
                 displayMessage(`New Quest: ${title}`, 'quest');
             }
         }
-        
+
         return { ...prev, player: newPlayer, gameWorld: newWorld };
       });
 
@@ -313,18 +313,22 @@ export const useGameState = () => {
 
     setGameState(prev => ({ ...prev, isLoading: true }));
     displayMessage(command, 'player-command');
-    
+
     try {
       const responseJson = await processPlayerAction(gameState.player, gameState.gameWorld, gameState.messages, command);
       parseAndApplyStateChanges(responseJson);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error executing command:", error);
-      displayMessage("The threads of fate are tangled. Your action could not be completed.", 'error');
+      if (error?.message === 'API_KEY_MISSING') {
+        displayMessage("API key is missing! Please set up your Gemini API key in Settings.", 'error');
+      } else {
+        displayMessage("The threads of fate are tangled. Your action could not be completed.", 'error');
+      }
     } finally {
       setGameState(prev => ({ ...prev, isLoading: false }));
     }
   }, [gameState.isLoading, gameState.player, gameState.gameWorld, gameState.messages, displayMessage, parseAndApplyStateChanges]);
-  
+
   const setActiveModal = useCallback((modal: GameState['activeModal']) => {
     setGameState(prev => ({ ...prev, activeModal: modal }));
   }, []);
@@ -344,7 +348,7 @@ export const useGameState = () => {
 
     try {
         const { mapUrl, mapLocations } = await generateMapData();
-        
+
         setGameState(prev => {
             if (!prev.gameWorld) return prev;
             return {

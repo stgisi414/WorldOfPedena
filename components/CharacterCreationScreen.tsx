@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { Player, CharacterClass, Item } from '../types';
 import { ItemType } from '../types';
@@ -35,7 +34,7 @@ export const CharacterCreationScreen = ({ onCharacterCreate }: CharacterCreation
     setIsLoading(false);
     setLoadingText('');
   };
-  
+
   const handleStartAdventure = async () => {
     if(!name || !background || !portrait || isLoading) return;
     setIsLoading(true);
@@ -74,7 +73,7 @@ export const CharacterCreationScreen = ({ onCharacterCreate }: CharacterCreation
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#4d3d2e] p-4 text-[#f3e9d3]">
         <div className="w-full max-w-4xl bg-[#f3e9d3] text-[#422b15] p-8 rounded-xl border-4 border-[#a58d6e] shadow-2xl">
             <h1 className="text-4xl font-title text-center mb-8">Create Your Adventurer</h1>
-            
+
             <div className="grid md:grid-cols-2 gap-8 items-start">
                 {/* Left Column: Form */}
                 <div className="space-y-6">

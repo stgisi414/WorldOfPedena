@@ -6,7 +6,19 @@ import { characterData } from '../data/characterData';
 import { classPresets } from '../data/classData';
 import { countries, cities } from '../data/lore';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Function to get API key from localStorage or throw error
+const getApiKey = (): string => {
+    const key = localStorage.getItem('gemini_api_key');
+    if (!key) {
+        throw new Error('API_KEY_MISSING');
+    }
+    return key;
+};
+
+// Initialize AI client with runtime key
+const getAI = () => {
+    return new GoogleGenAI({ apiKey: getApiKey() });
+};
 
 const characterStatsSchema = {
     type: Type.OBJECT,
@@ -127,6 +139,7 @@ export const generateCharacterBackground = async (name: string, pClass: string, 
     Keep it concise and mysterious.`;
 
     try {
+        const ai = getAI();
         const response: GenerateContentResponse = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
@@ -140,6 +153,7 @@ export const generateCharacterBackground = async (name: string, pClass: string, 
 
 export const generateCharacterPortrait = async (background: string): Promise<string> => {
     try {
+        const ai = getAI();
         const response = await ai.models.generateImages({
             model: 'imagen-3.0-generate-002',
             prompt: `Fantasy RPG character portrait, based on this description: ${background}. Digital art, detailed face, vibrant, high-resolution.`,
@@ -201,6 +215,7 @@ export const generateStartingEquipment = async (characterClass: string, backgrou
     Return ONLY a valid JSON object matching the schema.`;
 
     try {
+        const ai = getAI();
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
@@ -255,6 +270,7 @@ INSTRUCTIONS:
 6.  Level Ups: When a player levels up (levelUp: true), if their class progression includes an 'Ability Score Improvement', you MUST specify which stat to increase in 'statImprovements'. Choose a stat relevant to the class.`;
 
     try {
+        const ai = getAI();
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: masterPrompt,
@@ -290,6 +306,7 @@ export const generateMapData = async (): Promise<{ mapUrl: string; mapLocations:
 
     The map should show these varied climates: from the frozen north (Frostfell, Vaelthara) to a central temperate zone (Pedena, Sylvanmere), a hot desert (Dustlands), and tropical isles (Azure Archipelago). It should feature mountains, forests, deserts, and a large sea or ocean. Do not include any text labels on the map itself. The style should be reminiscent of classic fantasy novels.`;
 
+    const ai = getAI();
     const imageResponse = await ai.models.generateImages({
         model: 'imagen-3.0-generate-002',
         prompt: mapImagePrompt,
