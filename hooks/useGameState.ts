@@ -1,6 +1,7 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { GameState, Player, GameWorld, Message, MessageType, SaveGameData, Item, Quest, NPC, MapLocation, CharacterStats, CharacterClass } from '../types';
 import { processPlayerAction, generateMapData } from '../services/geminiService';
+import { MultiplayerService } from '../services/multiplayerService';
 import { worldData } from '../data/worldData';
 import { classProgression } from '../data/classProgression';
 import { classPresets } from '../data/classData';
@@ -36,6 +37,8 @@ const createWorldFromLocation = (locationName: string): GameWorld | null => {
 };
 
 export const useGameState = () => {
+  const multiplayerService = useRef<MultiplayerService | null>(null);
+  
   const [gameState, setGameState] = useState<GameState>({
     player: null,
     gameWorld: null,
@@ -50,6 +53,11 @@ export const useGameState = () => {
       currentTurn: null,
     },
   });
+
+  // Initialize multiplayer service
+  useEffect(() => {
+    multiplayerService.current = new MultiplayerService();
+  }, []);
 
   const displayMessage = useCallback((content: string, type: MessageType) => {
     setGameState(prev => ({
@@ -370,14 +378,109 @@ export const useGameState = () => {
     }
   }, [gameState.isLoading, gameState.gameWorld, displayMessage]);
 
+  const connectToMultiplayer = useCallback(async () => {
+    if (!multiplayerService.current) return;
+    
+    try {
+      await multiplayerService.current.connect(
+        (multiplayerState) => {
+          setGameState(prev => ({
+            ...prev,
+            multiplayer: {
+              ...prev.multiplayer,
+              ...multiplayerState,
+            },
+          }));
+        },
+        (content, type) => {
+          displayMessage(content, type as MessageType);
+        }
+      );
+    } catch (error) {
+      displayMessage('Failed to connect to multiplayer server.', 'error');
+    }
+  }, [displayMessage]);
+
+  const createMultiplayerRoom = useCallback(async () => {
+    if (!multiplayerService.current || !gameState.player) return;
+    
+    if (!multiplayerService.current.isConnected()) {
+      await connectToMultiplayer();
+    }
+    
+    multiplayerService.current.createRoom(gameState.player.name);
+  }, [gameState.player, connectToMultiplayer]);
+
+  const joinMultiplayerRoom = useCallback(async (roomId: string) => {
+    if (!multiplayerService.current || !gameState.player) return;
+    
+    if (!multiplayerService.current.isConnected()) {
+      await connectToMultiplayer();
+    }
+    
+    multiplayerService.current.joinRoom(roomId, gameState.player.name);
+  }, [gameState.player, connectToMultiplayer]);
+
+  const endMultiplayerTurn = useCallback(() => {
+    if (multiplayerService.current) {
+      multiplayerService.current.endTurn();
+    }
+  }, []);
+
+  const leaveMultiplayerRoom = useCallback(() => {
+    if (multiplayerService.current) {
+      multiplayerService.current.leaveRoom();
+      multiplayerService.current.disconnect();
+      setGameState(prev => ({
+        ...prev,
+        multiplayer: {
+          isConnected: false,
+          roomId: null,
+          players: [],
+          isMyTurn: true,
+          currentTurn: null,
+        },
+      }));
+    }
+  }, []);
+
+  const sendMultiplayerAction = useCallback((action: string, result?: string) => {
+    if (multiplayerService.current) {
+      multiplayerService.current.sendPlayerAction(action, result);
+    }
+  }, []);
+
+  // Enhanced executeCommand to work with multiplayer
+  const enhancedExecuteCommand = useCallback(async (command: string) => {
+    // Check if it's multiplayer and not our turn
+    if (gameState.multiplayer.isConnected && !gameState.multiplayer.isMyTurn) {
+      displayMessage("It's not your turn! Please wait for the other player.", 'error');
+      return;
+    }
+
+    // Send action to multiplayer if connected
+    if (gameState.multiplayer.isConnected) {
+      sendMultiplayerAction(command);
+    }
+
+    // Execute the original command
+    await executeCommand(command);
+  }, [gameState.multiplayer, executeCommand, displayMessage, sendMultiplayerAction]);
+
   return {
     ...gameState,
     saveGame,
     loadGame,
     startNewGame,
-    executeCommand,
+    executeCommand: enhancedExecuteCommand,
     setActiveModal,
     displayMessage,
     getOrGenerateMap,
+    connectToMultiplayer,
+    createMultiplayerRoom,
+    joinMultiplayerRoom,
+    endMultiplayerTurn,
+    leaveMultiplayerRoom,
+    sendMultiplayerAction,
   };
 };

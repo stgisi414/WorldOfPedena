@@ -5,35 +5,31 @@ import { Modal } from './Modal';
 import { SwordsIcon, CrownIcon } from './icons';
 
 export const MultiplayerModal = () => {
-    const { multiplayer, activeModal, setActiveModal, displayMessage } = useGame();
+    const { multiplayer, activeModal, setActiveModal, displayMessage, createMultiplayerRoom, joinMultiplayerRoom, endMultiplayerTurn, leaveMultiplayerRoom } = useGame();
     const [roomIdInput, setRoomIdInput] = useState('');
 
-    const handleCreateRoom = () => {
-        // Mock implementation
-        const newRoomId = 'XIKF1H';
-        displayMessage(`Joined room: ${newRoomId}`, 'success');
-        displayMessage('Waiting for location sync from party leader...', 'system');
-        // In a real app, this would come from a state update from a hook managing websockets
+    const handleCreateRoom = async () => {
+        await createMultiplayerRoom();
     };
 
-    const handleJoinRoom = () => {
-         // Mock implementation
-        if (roomIdInput) {
-            displayMessage(`Joined room: ${roomIdInput}`, 'success');
-            displayMessage('Vildia joins your party!', 'success');
-            displayMessage('Vildia: Greet Hrothgar', 'dialogue');
+    const handleJoinRoom = async () => {
+        if (roomIdInput.trim()) {
+            await joinMultiplayerRoom(roomIdInput.trim());
         }
     }
     
     const handleEndTurn = () => {
-        displayMessage('Your turn has ended automatically.', 'system');
-        displayMessage("It's Vildia's turn. Please wait...", 'system');
+        endMultiplayerTurn();
     }
 
-    const isConnected = multiplayer.isConnected || true; // Mocking connection
-    const room = 'XIKF1H'; // Mocking room
-    const players = [{name: "Hrothgar", isPartyLeader: true}, {name: "Vilidia", isPartyLeader: false}]; // Mock players
-    const currentTurn = "Hrothgar";
+    const handleLeaveRoom = () => {
+        leaveMultiplayerRoom();
+    }
+
+    const isConnected = multiplayer.isConnected;
+    const room = multiplayer.roomId;
+    const players = multiplayer.players;
+    const currentTurn = multiplayer.currentTurn;
 
     return (
         <Modal
@@ -52,7 +48,7 @@ export const MultiplayerModal = () => {
                     <div className="bg-[#d8c4a1] p-2 rounded border border-[#a58d6e] mb-4">
                         <span className="font-bold">Room:</span> {room}
                     </div>
-                    <p className="font-bold mb-2">{players[0].isPartyLeader ? "You are the party leader" : "You are a party member"}</p>
+                    <p className="font-bold mb-2">{players.find(p => p.isPartyLeader) ? "You are the party leader" : "You are a party member"}</p>
                     
                     <h4 className="font-bold mt-4 mb-2">Players:</h4>
                     <div className="space-y-2">
@@ -65,8 +61,8 @@ export const MultiplayerModal = () => {
                     </div>
 
                     <div className="mt-6 bg-[#e9e0ca] p-4 rounded border border-[#a58d6e] text-center">
-                        <p className="font-bold">Current Turn: {currentTurn}</p>
-                        {currentTurn === players[0].name && (
+                        <p className="font-bold">Current Turn: {players.find(p => p.id === currentTurn)?.name || 'Unknown'}</p>
+                        {multiplayer.isMyTurn && (
                              <button 
                                 onClick={handleEndTurn}
                                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 shadow"
@@ -109,9 +105,10 @@ export const MultiplayerModal = () => {
                 </div>
             )}
              <button
+                onClick={handleLeaveRoom}
                 className="mt-6 w-full text-center py-2 bg-red-800 text-white rounded hover:bg-red-900"
              >
-                Exit
+                {isConnected ? 'Leave Room' : 'Exit'}
              </button>
         </Modal>
     );

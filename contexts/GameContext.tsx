@@ -13,6 +13,12 @@ interface GameContextType extends GameState {
   setActiveModal: (modal: GameState['activeModal']) => void;
   displayMessage: (content: string, type: 'narration' | 'system' | 'combat' | 'quest' | 'success' | 'error' | 'exploration' | 'player-command' | 'dialogue') => void;
   getOrGenerateMap: () => Promise<void>;
+  connectToMultiplayer: () => Promise<void>;
+  createMultiplayerRoom: () => Promise<void>;
+  joinMultiplayerRoom: (roomId: string) => Promise<void>;
+  endMultiplayerTurn: () => void;
+  leaveMultiplayerRoom: () => void;
+  sendMultiplayerAction: (action: string, result?: string) => void;
 }
 
 // Create the context with a default value
