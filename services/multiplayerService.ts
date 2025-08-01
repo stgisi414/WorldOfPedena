@@ -16,7 +16,7 @@ export class MultiplayerService {
   private reconnectDelay: number = 1000;
   private messageHandlers: Map<string, (message: any) => void> = new Map();
 
-  constructor(private serverUrl: string = 'ws://localhost:5000') {}
+  constructor(private serverUrl: string = `ws://${window.location.hostname}:5000`) {}
 
   connect(onStateUpdate: (state: Partial<MultiplayerState>) => void, onMessage: (content: string, type: string) => void): Promise<void> {
     return new Promise((resolve, reject) => {
