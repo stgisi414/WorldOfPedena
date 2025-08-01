@@ -6,7 +6,7 @@ interface StartScreenProps {
   onLoadGame: () => void;
 }
 
-const MainButton = ({ onClick, disabled, children, icon: React.ElementType }) => (
+const MainButton = ({ onClick, disabled, children, icon: Icon }) => (
     <button
         onClick={onClick}
         disabled={disabled}
