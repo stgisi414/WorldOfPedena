@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { Modal } from './Modal';
 import { SwordsIcon, CrownIcon } from './icons';
 
 export const MultiplayerModal = () => {
-    const { multiplayer, activeModal, setActiveModal, displayMessage, createMultiplayerRoom, joinMultiplayerRoom, endMultiplayerTurn, leaveMultiplayerRoom } = useGame();
+    const { multiplayer, activeModal, setActiveModal, createMultiplayerRoom, joinMultiplayerRoom, leaveMultiplayerRoom } = useGame();
     const [roomIdInput, setRoomIdInput] = useState('');
 
     const handleCreateRoom = async () => {
@@ -14,22 +13,19 @@ export const MultiplayerModal = () => {
 
     const handleJoinRoom = async () => {
         if (roomIdInput.trim()) {
-            await joinMultiplayerRoom(roomIdInput.trim());
+            await joinMultiplayerRoom(roomIdInput.trim().toUpperCase());
         }
-    }
-    
-    const handleEndTurn = () => {
-        endMultiplayerTurn();
     }
 
     const handleLeaveRoom = () => {
         leaveMultiplayerRoom();
+        if (activeModal === 'multiplayer') {
+            setActiveModal(null);
+        }
     }
 
-    const isConnected = multiplayer.isConnected;
-    const room = multiplayer.roomId;
-    const players = multiplayer.players;
-    const currentTurn = multiplayer.currentTurn;
+    const { isConnected, roomId, players, currentTurn } = multiplayer;
+    const currentPlayerTurnName = players.find(p => p.id === currentTurn)?.name || 'Unknown';
 
     return (
         <Modal
@@ -44,32 +40,26 @@ export const MultiplayerModal = () => {
 
             {isConnected ? (
                 <div>
-                    <p className="text-green-600 font-bold mb-2">Connected</p>
-                    <div className="bg-[#d8c4a1] p-2 rounded border border-[#a58d6e] mb-4">
-                        <span className="font-bold">Room:</span> {room}
+                    <p className="text-green-600 font-bold mb-2">Connected to Party</p>
+                    <div className="bg-[#d8c4a1] p-2 rounded border border-[#a58d6e] mb-4 text-center">
+                        <span className="font-bold text-lg">Room ID: </span> 
+                        <span className="font-mono text-lg tracking-widest">{roomId}</span>
                     </div>
-                    <p className="font-bold mb-2">{players.find(p => p.isPartyLeader) ? "You are the party leader" : "You are a party member"}</p>
-                    
-                    <h4 className="font-bold mt-4 mb-2">Players:</h4>
+
+                    <h4 className="font-bold mt-4 mb-2">Players in Party:</h4>
                     <div className="space-y-2">
                         {players.map(p => (
-                            <div key={p.name} className="flex items-center gap-2 bg-[#e9e0ca] p-2 rounded border border-[#a58d6e]">
-                                {p.name}
-                                {p.isPartyLeader && <CrownIcon className="w-5 h-5 text-yellow-500" />}
+                            <div key={p.id} className={`flex items-center gap-3 bg-[#e9e0ca] p-2 rounded border border-[#a58d6e] transition-all ${p.id === currentTurn ? 'ring-2 ring-green-500' : ''}`}>
+                                {p.isPartyLeader && <CrownIcon className="w-5 h-5 text-yellow-600 flex-shrink-0" title="Party Leader"/>}
+                                <span className="font-bold">{p.name}</span>
+                                {p.id === currentTurn && <span className="text-sm font-bold text-green-700 ml-auto"> (Current Turn)</span>}
                             </div>
                         ))}
                     </div>
 
                     <div className="mt-6 bg-[#e9e0ca] p-4 rounded border border-[#a58d6e] text-center">
-                        <p className="font-bold">Current Turn: {players.find(p => p.id === currentTurn)?.name || 'Unknown'}</p>
-                        {multiplayer.isMyTurn && (
-                             <button 
-                                onClick={handleEndTurn}
-                                className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 shadow"
-                             >
-                                End Turn
-                             </button>
-                        )}
+                        <p className="font-bold">Current Turn: {currentPlayerTurnName}</p>
+                        <p className="text-sm italic mt-1">The turn will automatically advance after the current player acts.</p>
                     </div>
                 </div>
             ) : (
@@ -79,7 +69,7 @@ export const MultiplayerModal = () => {
                             onClick={handleCreateRoom}
                             className="w-full px-4 py-2 bg-[#d8c4a1] border border-[#a58d6e] rounded hover:bg-[#c9b898] transition-colors shadow"
                         >
-                            Create Room
+                            Create a New Party
                         </button>
                     </div>
                     <div className="flex items-center gap-4">
@@ -93,13 +83,14 @@ export const MultiplayerModal = () => {
                             value={roomIdInput}
                             onChange={(e) => setRoomIdInput(e.target.value.toUpperCase())}
                             placeholder="Enter Room ID"
-                            className="flex-grow p-2 bg-white border border-[#a58d6e] rounded shadow-inner"
+                            maxLength={6}
+                            className="flex-grow p-2 bg-white border border-[#a58d6e] rounded shadow-inner font-mono tracking-widest text-center"
                         />
                         <button
                             onClick={handleJoinRoom}
                             className="px-4 py-2 bg-[#d8c4a1] border border-[#a58d6e] rounded hover:bg-[#c9b898] transition-colors shadow"
                         >
-                            Join Room
+                            Join Party
                         </button>
                     </div>
                 </div>
@@ -108,7 +99,7 @@ export const MultiplayerModal = () => {
                 onClick={handleLeaveRoom}
                 className="mt-6 w-full text-center py-2 bg-red-800 text-white rounded hover:bg-red-900"
              >
-                {isConnected ? 'Leave Room' : 'Exit'}
+                {isConnected ? 'Leave Party' : 'Close'}
              </button>
         </Modal>
     );
