@@ -1,0 +1,99 @@
+WebSocket connection to 'ws://localhost:5000/' failed: 
+(anonymous) @ multiplayerService.ts:24
+connect @ multiplayerService.ts:22
+(anonymous) @ useGameState.ts:385
+(anonymous) @ useGameState.ts:408
+handleCreateRoom @ MultiplayerModal.tsx:12
+executeDispatch @ react-dom_client.js?v=4779e4cc:11736
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+processDispatchQueue @ react-dom_client.js?v=4779e4cc:11772
+(anonymous) @ react-dom_client.js?v=4779e4cc:12182
+batchedUpdates$1 @ react-dom_client.js?v=4779e4cc:2628
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=4779e4cc:11877
+dispatchEvent @ react-dom_client.js?v=4779e4cc:14792
+dispatchDiscreteEvent @ react-dom_client.js?v=4779e4cc:14773Understand this error
+multiplayerService.ts:50 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
+ws.onerror @ multiplayerService.ts:50Understand this error
+multiplayerService.ts:42 Disconnected from multiplayer server
+multiplayerService.ts:212 WebSocket connection to 'ws://localhost:5000/' failed: WebSocket is closed before the connection is established.
+disconnect @ multiplayerService.ts:212
+(anonymous) @ useGameState.ts:433
+handleLeaveRoom @ MultiplayerModal.tsx:26
+executeDispatch @ react-dom_client.js?v=4779e4cc:11736
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+processDispatchQueue @ react-dom_client.js?v=4779e4cc:11772
+(anonymous) @ react-dom_client.js?v=4779e4cc:12182
+batchedUpdates$1 @ react-dom_client.js?v=4779e4cc:2628
+dispatchEventForPluginEventSystem @ react-dom_client.js?v=4779e4cc:11877
+dispatchEvent @ react-dom_client.js?v=4779e4cc:14792
+dispatchDiscreteEvent @ react-dom_client.js?v=4779e4cc:14773
+<button>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=4779e4cc:250
+MultiplayerModal @ MultiplayerModal.tsx:107
+react-stack-bottom-frame @ react-dom_client.js?v=4779e4cc:17424
+renderWithHooksAgain @ react-dom_client.js?v=4779e4cc:4281
+renderWithHooks @ react-dom_client.js?v=4779e4cc:4217
+updateFunctionComponent @ react-dom_client.js?v=4779e4cc:6619
+beginWork @ react-dom_client.js?v=4779e4cc:7654
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+performUnitOfWork @ react-dom_client.js?v=4779e4cc:10868
+workLoopSync @ react-dom_client.js?v=4779e4cc:10728
+renderRootSync @ react-dom_client.js?v=4779e4cc:10711
+performWorkOnRoot @ react-dom_client.js?v=4779e4cc:10330
+performSyncWorkOnRoot @ react-dom_client.js?v=4779e4cc:11635
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=4779e4cc:11536
+processRootScheduleInMicrotask @ react-dom_client.js?v=4779e4cc:11558
+(anonymous) @ react-dom_client.js?v=4779e4cc:11649
+<MultiplayerModal>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=4779e4cc:250
+GameUI @ GameUI.tsx:62
+react-stack-bottom-frame @ react-dom_client.js?v=4779e4cc:17424
+renderWithHooksAgain @ react-dom_client.js?v=4779e4cc:4281
+renderWithHooks @ react-dom_client.js?v=4779e4cc:4217
+updateFunctionComponent @ react-dom_client.js?v=4779e4cc:6619
+beginWork @ react-dom_client.js?v=4779e4cc:7654
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+performUnitOfWork @ react-dom_client.js?v=4779e4cc:10868
+workLoopSync @ react-dom_client.js?v=4779e4cc:10728
+renderRootSync @ react-dom_client.js?v=4779e4cc:10711
+performWorkOnRoot @ react-dom_client.js?v=4779e4cc:10330
+performSyncWorkOnRoot @ react-dom_client.js?v=4779e4cc:11635
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=4779e4cc:11536
+processRootScheduleInMicrotask @ react-dom_client.js?v=4779e4cc:11558
+(anonymous) @ react-dom_client.js?v=4779e4cc:11649
+<GameUI>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=4779e4cc:250
+AppContent @ App.tsx:48
+react-stack-bottom-frame @ react-dom_client.js?v=4779e4cc:17424
+renderWithHooksAgain @ react-dom_client.js?v=4779e4cc:4281
+renderWithHooks @ react-dom_client.js?v=4779e4cc:4217
+updateFunctionComponent @ react-dom_client.js?v=4779e4cc:6619
+beginWork @ react-dom_client.js?v=4779e4cc:7654
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+performUnitOfWork @ react-dom_client.js?v=4779e4cc:10868
+workLoopSync @ react-dom_client.js?v=4779e4cc:10728
+renderRootSync @ react-dom_client.js?v=4779e4cc:10711
+performWorkOnRoot @ react-dom_client.js?v=4779e4cc:10330
+performSyncWorkOnRoot @ react-dom_client.js?v=4779e4cc:11635
+flushSyncWorkAcrossRoots_impl @ react-dom_client.js?v=4779e4cc:11536
+processRootScheduleInMicrotask @ react-dom_client.js?v=4779e4cc:11558
+(anonymous) @ react-dom_client.js?v=4779e4cc:11649
+<AppContent>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=4779e4cc:250
+App @ App.tsx:57
+react-stack-bottom-frame @ react-dom_client.js?v=4779e4cc:17424
+renderWithHooksAgain @ react-dom_client.js?v=4779e4cc:4281
+renderWithHooks @ react-dom_client.js?v=4779e4cc:4217
+updateFunctionComponent @ react-dom_client.js?v=4779e4cc:6619
+beginWork @ react-dom_client.js?v=4779e4cc:7654
+runWithFiberInDEV @ react-dom_client.js?v=4779e4cc:1485
+performUnitOfWork @ react-dom_client.js?v=4779e4cc:10868
+workLoopSync @ react-dom_client.js?v=4779e4cc:10728
+renderRootSync @ react-dom_client.js?v=4779e4cc:10711
+performWorkOnRoot @ react-dom_client.js?v=4779e4cc:10330
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=4779e4cc:11623
+performWorkUntilDeadline @ react-dom_client.js?v=4779e4cc:36
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=4779e4cc:250
+(anonymous) @ index.tsx:14Understand this warning
+multiplayerService.ts:50 WebSocket error: Event {isTrusted: true, type: 'error', target: WebSocket, currentTarget: WebSocket, eventPhase: 2, …}
